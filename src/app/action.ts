@@ -33,6 +33,10 @@ export const addComment = async () => {
 };
 
 export const getUser = async () => {
-  const userData = await prisma.user.findMany();
-  return userData;
+  try {
+    const userData = await prisma.user.findMany();
+    return userData;
+  } catch (error) {
+    return [];
+  }
 };
