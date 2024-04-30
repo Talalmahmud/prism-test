@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id       Int      @id @default(autoincrement())
+  name     String   // User's name
+  email    String   @unique // User's email (unique constraint)
+  password String
+  posts    Post[]   // One-to-many relationship with Post
+  comments Comment[] // One-to-many relationship with Comment
+}
+
+// Define the Post model
+model Post {
+  id        Int       @id @default(autoincrement())
+  title     String    // Post title
+  content   String    // Post content
+  createdAt DateTime  @default(now()) // Timestamp when the post is created
+  authorId  Int       // Foreign key: ID of the user who created the post
+  author    User      @relation(fields: [authorId], references: [id])
+  comments  Comment[] // One-to-many relationship with Comment
+}
+
+// Define the Comment model
+model Comment {
+  id       Int      @id @default(autoincrement())
+  content  String   // Comment content
+  createdAt DateTime @default(now()) // Timestamp when the comment is created
+  postId   Int      // Foreign key: ID of the post the comment belongs to
+  post     Post     @relation(fields: [postId], references: [id])
+  authorId Int      // Foreign key: ID of the user who created the comment
+  author   User     @relation(fields: [authorId], references: [id])
+}
+
